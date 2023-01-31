@@ -1,0 +1,35 @@
+Sub SQLVBA()
+strSQL = InputBox("enter sql command", "SQL")
+'strSQL = "select * from [Sheet1$B4:D9]"
+Dim cn As ADODB.Connection
+Dim rs As ADODB.Recordset
+
+strFile = ThisWorkbook.FullName
+strCon = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & strFile _
+& ";Extended Properties=""Excel 12.0;HDR=Yes;IMEX=1"";"
+
+Set cn = CreateObject("ADODB.Connection")
+Set rs = CreateObject("ADODB.Recordset")
+
+cn.Open strCon
+'use for table in place of ranage
+'addrss = Range("Table1[#All]").Parent.Name + "$" + Range("Table1[#All]").Address(False, False)
+'strSQL = "SELECT id,name FROM [" & addrss & "]"
+
+rs.Open strSQL, cn
+
+    If Not rs.EOF Then
+        For i = 0 To rs.Fields.Count - 1
+            ActiveCell.Offset(0, i).Value = rs.Fields(i).Name
+        Next i
+        ActiveCell.Offset(1, 0).CopyFromRecordset rs
+    End If
+
+    rs.Close
+    cn.Close
+
+End Sub
+
+
+
+
